@@ -113,3 +113,9 @@ button:hover {
 button:focus {
   outline: none;
 }
+
+li.completed span {
+  text-decoration: line-through;
+  color: #888;
+}
+
