@@ -1,5 +1,7 @@
+// Load tasks from localStorage or start with empty array
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
+// Add a new task
 document.getElementById('addTaskBtn').addEventListener('click', () => {
   const input = document.getElementById('taskInput');
   const text = input.value.trim();
@@ -11,31 +13,36 @@ document.getElementById('addTaskBtn').addEventListener('click', () => {
   }
 });
 
+// Live search and filter
 document.getElementById('searchInput').addEventListener('input', renderTasks);
 document.getElementById('filterDropdown').addEventListener('change', renderTasks);
 
+// Save to localStorage
 function saveTasks() {
   localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
+// Render all tasks based on filters
 function renderTasks() {
   const list = document.getElementById('taskList');
   list.innerHTML = '';
 
-  const search = document.getElementById('searchInput').value.toLowerCase();
-  const filter = document.getElementById('filterDropdown').value;
+  const searchValue = document.getElementById('searchInput').value.toLowerCase();
+  const filterValue = document.getElementById('filterDropdown').value;
 
-  let filtered = tasks.filter(task => task.text.toLowerCase().includes(search));
+  let filteredTasks = tasks.filter(task =>
+    task.text.toLowerCase().includes(searchValue)
+  );
 
-  if (filter === 'active') {
-    filtered = filtered.filter(task => !task.completed);
-  } else if (filter === 'completed') {
-    filtered = filtered.filter(task => task.completed);
+  if (filterValue === 'active') {
+    filteredTasks = filteredTasks.filter(task => !task.completed);
+  } else if (filterValue === 'completed') {
+    filteredTasks = filteredTasks.filter(task => task.completed);
   }
 
-  filtered.forEach((task, index) => {
+  filteredTasks.forEach((task, index) => {
     const li = document.createElement('li');
-    if (task.completed) li.classList.add('completed');
+    li.className = task.completed ? 'completed' : '';
 
     const span = document.createElement('span');
     span.textContent = task.text;
@@ -44,7 +51,7 @@ function renderTasks() {
     completeBtn.textContent = task.completed ? 'Undo' : 'Complete';
     completeBtn.className = 'complete-btn';
     completeBtn.addEventListener('click', () => {
-      task.completed = !task.completed;
+      tasks[index].completed = !tasks[index].completed;
       saveTasks();
       renderTasks();
     });
@@ -65,4 +72,5 @@ function renderTasks() {
   });
 }
 
+// Initial render
 renderTasks();
