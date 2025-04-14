@@ -13,11 +13,11 @@ body {
 
 .container {
   max-width: 600px;
-  margin: 0 auto;
-  background-color: #fff;
+  margin: auto;
+  background: #fff;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 header {
@@ -27,31 +27,32 @@ header {
 
 header h1 {
   font-size: 2rem;
-  color: #333;
+  color: #444;
 }
 
-.task-input {
+.task-input,
+.search-filter {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
 }
 
-.task-input input {
-  width: 80%;
-  padding: 8px;
+.task-input input,
+.search-filter input {
+  width: 70%;
+  padding: 10px;
   font-size: 1rem;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .task-input button {
-  width: 15%;
-  padding: 8px;
-  font-size: 1rem;
-  background-color: #4CAF50;
+  width: 25%;
+  background-color: #4caf50;
   color: white;
+  font-size: 1rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
 }
 
@@ -59,59 +60,61 @@ header h1 {
   background-color: #45a049;
 }
 
-.search-filter {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.search-filter input {
-  width: 70%;
-  padding: 8px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
 .search-filter select {
   width: 25%;
-  padding: 8px;
+  padding: 10px;
   font-size: 1rem;
+  border-radius: 6px;
   border: 1px solid #ccc;
-  border-radius: 4px;
 }
 
 #taskList {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
 }
 
 #taskList li {
-  background-color: #f9f9f9;
+  background: #f9f9f9;
   padding: 15px;
-  margin: 10px 0;
-  border-radius: 4px;
+  margin-bottom: 10px;
+  border-radius: 6px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1rem;
-  transition: background-color 0.3s;
 }
 
 #taskList li.completed {
-  background-color: #e0f7fa;
   text-decoration: line-through;
+  background-color: #e0f7fa;
 }
 
-#taskList li button {
-  background-color: #f44336;
-  color: white;
+#taskList span {
+  flex: 1;
+}
+
+.complete-btn,
+.delete-btn {
+  margin-left: 10px;
+  padding: 8px 10px;
   border: none;
-  padding: 8px;
-  border-radius: 4px;
+  border-radius: 5px;
+  color: #fff;
   cursor: pointer;
+  font-size: 0.9rem;
 }
 
-#taskList li button:hover {
-  background-color: #e53935;
+.complete-btn {
+  background-color: #2196f3;
+}
+
+.complete-btn:hover {
+  background-color: #1976d2;
+}
+
+.delete-btn {
+  background-color: #f44336;
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f;
 }
