@@ -1,47 +1,68 @@
-const taskInput = document.getElementById('taskInput');
-const addTaskBtn = document.getElementById('addTaskBtn');
-const taskList = document.getElementById('taskList');
-
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
-function renderTasks() {
-  taskList.innerHTML = '';
-  tasks.forEach((task, index) => {
-    const li = document.createElement('li');
-    li.className = task.completed ? 'completed' : '';
+document.getElementById('addTaskBtn').addEventListener('click', () => {
+  const input = document.getElementById('taskInput');
+  const text = input.value.trim();
+  if (text) {
+    tasks.push({ text, completed: false });
+    input.value = '';
+    saveTasks();
+    renderTasks();
+  }
+});
 
-    li.innerHTML = `
-      <span onclick="toggleTask(${index})">${task.text}</span>
-      <button onclick="deleteTask(${index})">❌</button>
-    `;
-    taskList.appendChild(li);
-  });
+document.getElementById('searchInput').addEventListener('input', renderTasks);
+document.getElementById('filterDropdown').addEventListener('change', renderTasks);
 
+function saveTasks() {
   localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-function addTask() {
-  const text = taskInput.value.trim();
-  if (text === '') return alert('Please enter a task');
+function renderTasks() {
+  const list = document.getElementById('taskList');
+  list.innerHTML = '';
 
-  tasks.push({ text, completed: false });
-  taskInput.value = '';
-  renderTasks();
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const filter = document.getElementById('filterDropdown').value;
+
+  let filtered = tasks.filter(task => task.text.toLowerCase().includes(search));
+
+  if (filter === 'active') {
+    filtered = filtered.filter(task => !task.completed);
+  } else if (filter === 'completed') {
+    filtered = filtered.filter(task => task.completed);
+  }
+
+  filtered.forEach((task, index) => {
+    const li = document.createElement('li');
+    if (task.completed) li.classList.add('completed');
+
+    const span = document.createElement('span');
+    span.textContent = task.text;
+
+    const completeBtn = document.createElement('button');
+    completeBtn.textContent = task.completed ? 'Undo' : 'Complete';
+    completeBtn.className = 'complete-btn';
+    completeBtn.addEventListener('click', () => {
+      task.completed = !task.completed;
+      saveTasks();
+      renderTasks();
+    });
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.addEventListener('click', () => {
+      tasks.splice(index, 1);
+      saveTasks();
+      renderTasks();
+    });
+
+    li.appendChild(span);
+    li.appendChild(completeBtn);
+    li.appendChild(deleteBtn);
+    list.appendChild(li);
+  });
 }
-
-function toggleTask(index) {
-  tasks[index].completed = !tasks[index].completed;
-  renderTasks();
-}
-
-function deleteTask(index) {
-  tasks.splice(index, 1);
-  renderTasks();
-}
-
-addTaskBtn.addEventListener('click', addTask);
-taskInput.addEventListener('keypress', e => {
-  if (e.key === 'Enter') addTask();
-});
 
 renderTasks();
