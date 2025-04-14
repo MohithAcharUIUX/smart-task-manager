@@ -19,8 +19,10 @@ class TaskManager {
 
   toggleTask(id) {
     const task = this.tasks.find(t => t.id === id);
-    if (task) task.completed = !task.completed;
-    this.saveTasks();
+    if (task) {
+      task.completed = !task.completed;
+      this.saveTasks();
+    }
   }
 
   deleteTask(id) {
