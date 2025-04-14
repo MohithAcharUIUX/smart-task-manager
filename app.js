@@ -26,7 +26,7 @@ class TaskManager {
   }
 
   deleteTask(id) {
-    this.tasks = this.tasks.filter(t => t.id !== id);
+    this.tasks = this.tasks.filter(t => t.id !== id); // `filter()` used here
     this.saveTasks();
   }
 
@@ -35,12 +35,56 @@ class TaskManager {
   }
 
   getFilteredTasks(filter = 'all', search = '') {
+    // `filter()` to filter tasks based on the completion status
     return this.tasks.filter(task => {
       const matchesSearch = task.text.toLowerCase().includes(search.toLowerCase());
       if (filter === 'completed') return task.completed && matchesSearch;
       if (filter === 'active') return !task.completed && matchesSearch;
       return matchesSearch;
     });
+  }
+
+  getCompletedTasks() {
+    // `filter()` to return only completed tasks
+    return this.tasks.filter(task => task.completed);
+  }
+
+  getActiveTasks() {
+    // `filter()` to return only active tasks
+    return this.tasks.filter(task => !task.completed);
+  }
+
+  getTaskTextLength() {
+    // `map()` to get text length of all tasks
+    return this.tasks.map(task => task.text.length);
+  }
+
+  getTaskSummary() {
+    // `reduce()` to calculate the total number of characters in all tasks
+    return this.tasks.reduce((total, task) => total + task.text.length, 0);
+  }
+
+  // Higher-Order Function: Finding a task by text
+  findTaskByText(searchText) {
+    return this.tasks.find(task => task.text.toLowerCase().includes(searchText.toLowerCase())); // `find()`
+  }
+
+  // `some()` - Check if there is any task that is completed
+  anyCompleted() {
+    return this.tasks.some(task => task.completed); // `some()` to check if any task is completed
+  }
+
+  // `every()` - Check if all tasks are completed
+  allCompleted() {
+    return this.tasks.every(task => task.completed); // `every()` to check if all tasks are completed
+  }
+
+  // Example of Object Destructuring for extracting properties from tasks
+  getTasksSummary() {
+    return this.tasks.map(({ text, completed }) => ({
+      text,
+      completed,
+    }));
   }
 }
 
@@ -53,13 +97,14 @@ const addTaskBtn = document.getElementById('addTaskBtn');
 const searchInput = document.getElementById('searchInput');
 const filterDropdown = document.getElementById('filterDropdown');
 
+// Render tasks using `forEach()`
 function renderTasks() {
   const filter = filterDropdown.value;
   const search = searchInput.value;
   const tasks = taskManager.getFilteredTasks(filter, search);
 
   taskList.innerHTML = '';
-  tasks.forEach(task => {
+  tasks.forEach(task => { // `forEach()` to render each task
     const li = document.createElement('li');
     li.className = task.completed ? 'completed' : '';
     li.innerHTML = `
@@ -70,7 +115,7 @@ function renderTasks() {
   });
 }
 
-// Handlers (exposed for onclick)
+// Handling toggle and delete operations
 window.handleToggle = function(id) {
   taskManager.toggleTask(id);
   renderTasks();
@@ -81,6 +126,7 @@ window.handleDelete = function(id) {
   renderTasks();
 };
 
+// Add a task and render the updated list
 function handleAdd() {
   const text = taskInput.value.trim();
   if (!text) return alert('Enter a task');
@@ -89,39 +135,27 @@ function handleAdd() {
   renderTasks();
 }
 
-// Debounce utility
-function debounce(fn, delay = 300) {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn(...args), delay);
-  };
+// Show task summary: total characters in tasks using `reduce()`
+function showTaskSummary() {
+  const totalLength = taskManager.getTaskSummary(); // Using `reduce()` to calculate total task text length
+  console.log('Total characters in tasks:', totalLength);
 }
 
-// Async example: fetch sample tasks (optional)
-async function fetchInitialTasks() {
-  if (taskManager.tasks.length > 0) return;
-
-  const res = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=5');
-  const data = await res.json();
-  data.forEach(todo => {
-    taskManager.tasks.push({
-      id: todo.id,
-      text: todo.title,
-      completed: todo.completed
-    });
-  });
-  taskManager.saveTasks();
-  renderTasks();
+// Show task status summaries
+function showStatusSummary() {
+  console.log('Any Completed:', taskManager.anyCompleted()); // `some()` to check if any task is completed
+  console.log('All Completed:', taskManager.allCompleted()); // `every()` to check if all tasks are completed
 }
 
-// Event listeners
+// Log all tasks with destructuring example
+function logTaskSummary() {
+  const tasksSummary = taskManager.getTasksSummary();
+  console.log(tasksSummary); // Logs an array of task summaries
+}
+
 addTaskBtn.addEventListener('click', handleAdd);
-taskInput.addEventListener('keypress', e => {
-  if (e.key === 'Enter') handleAdd();
-});
+searchInput.addEventListener('input', renderTasks);
 filterDropdown.addEventListener('change', renderTasks);
-searchInput.addEventListener('input', debounce(renderTasks));
 
-// Init
-fetchInitialTasks();
+// Initial rendering
+renderTasks();
